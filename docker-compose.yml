@@ -1,0 +1,44 @@
+version: '3.2'
+services:
+  user-app:
+   image: sourav123456789/movie-cruiser-app:user-app
+   build: authenticationapp/
+   restart: always
+   network_mode: host
+   ports:
+     - 8089:8089
+   expose:
+     - 8089
+   depends_on:
+     - movie-mysql
+  movie-app:
+   image: sourav123456789/movie-cruiser-app:movie-app
+   build: moviecruiserapp/
+   restart: always
+   network_mode: host
+   ports:
+     - 8097:8097
+   expose:
+     - 8097
+   depends_on:
+     - movie-mysql
+
+  movie-mysql:
+   image: mysql:5.5
+   network_mode: host
+   ports:
+     - "3306:3306"
+   environment:
+     MYSQL_ROOT_PASSWORD: root
+     MYSQL_DATABASE: newsfeeddb
+     MYSQL_USER: fsemovieuser
+     MYSQL_PASSWORD: FsePassword
+   volumes:
+     - /opt/movie/mysqldb:/var/lib/mysql
+  angular:
+    image: sourav123456789/movie-cruiser-app:angular-app
+    build: Frontend/MovieApp
+    network_mode: host
+    container_name: angular-docker
+    ports:
+      - 4200:4200
